@@ -23,7 +23,10 @@
     const MODELS = [
         "openai/gpt-4o-mini",
         "anthropic/claude-opus-4.6",
-        "google/gemini-3.1-flash-lite-preview"
+        "allenai/olmo-3-7b-instruct",
+        "arcee-ai/trinity-large-preview:free",
+        "arcee-ai/trinity-mini",
+        "stepfun/step-3.5-flash"
     ];
 
     function simpleHash(str) {
@@ -55,9 +58,9 @@
     });
 
     panel.innerHTML = `
-        <div id="q" style="color:#ffdd88;font-weight:600;margin-bottom:6px;min-height:1.2em;"></div>
+        <div id="q" style="color:#ffdd88;font-weight:600;margin-bottom:6px;min-height:1.2em;">---</div>
         <div id="o" style="margin-bottom:8px;min-height:1.6em;"></div>
-        <div id="a" style="color:#88ff88;font-weight:bold;font-size:1.2em;"></div>
+        <div id="a" style="color:#88ff88;font-weight:bold;font-size:1.2em;">---</div>
     `;
     document.body.appendChild(panel);
 
@@ -68,7 +71,7 @@
     let lastHash = "";
 
     async function askAI(prompt) {
-        let ans = "❌";
+        let ans = "???";
         for (let i = 0; i < KEYS.length; i++) {
             const key = KEYS[i];
             try {
@@ -101,7 +104,7 @@
                     const json = JSON.parse(res.responseText);
                     ans = json.choices?.[0]?.message?.content?.trim() ?? "";
                     ans = ans.replace(/["„”'‘’„”]+/g, '').replace(/^[1-4.)\s-]+/i, '').trim();
-                    if (ans) return ans;
+                    if (ans) return ans; // jak dostał odpowiedź → kończymy
                 }
             } catch {}
         }
@@ -147,7 +150,7 @@
         const opts = Array.from(optsSet);
         oDiv.innerHTML = opts.map((t,i) => `<div style="margin:2px 0;">${i+1}) ${t}</div>`).join('') || "(brak)";
 
-        aDiv.textContent = "...";
+        aDiv.textContent = "Myślę...";
 
         let prompt = `Odpowiedz TYLKO poprawną odpowiedzią – krótko i bez niczego więcej.
 
